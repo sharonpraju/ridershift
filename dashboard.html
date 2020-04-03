@@ -9,6 +9,8 @@
 <link rel='stylesheet' href='css/font.css'>
 <link rel='stylesheet' href='css/font-awesome.min.css'>
 <link rel="stylesheet" href="css/leaflet.css" />
+<link rel="stylesheet" href="css/jquery-ui.css">
+<link rel="stylesheet" href="css/jquery-style.css">
 
   <style>
 
@@ -282,6 +284,28 @@ Mid:#5aaa9d
     color: #ffffff;
   }
 
+  .btn_done{
+    height: 30px;
+    width: 50px;
+    padding-left: 91px;
+    padding-right: 91px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-left: 15px;
+    background-color: #67b26f;
+    color: #ffffff;
+    box-shadow: 0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(156, 39, 176, 0.4);
+    border: 0px;
+    border-radius: 2px;
+    text-decoration: none;
+    font-size: 15px;
+    cursor: pointer;
+  }
+
+  .btn_done:hover{
+    color: #ffffff;
+  }
+
   .modal {
   display: none; /* Hidden by default */
   position: fixed; /* Stay in place */
@@ -325,9 +349,14 @@ Mid:#5aaa9d
   font-size: 11px;
 }
 
+.img_success{
+  height: 150px;
+  width: 150px;
+  margin-top: -50px;
+}
+
 </style>
   
-
 
 </head>
 <body>
@@ -379,6 +408,24 @@ Mid:#5aaa9d
         <br>
       </div>
       <div class="pizza__price" id="details_hidden_2x">
+      </div>
+      <div class="pizza__content" id="details_hidden_3">
+        <div class="pizza__title">
+          <h1 class="pizza__heading"></h1>
+          <div class="location_txt"></div>
+        </div>
+        <br>
+        <p class="pizza__description">
+        <center>
+          <img class="img_success" src="img/success.png">
+        <h4>Your Journey Has Been Successfully Recorded<br>And You Will Recieve lift Requests Soon.</h4>
+        <br>
+        <a class="btn_done" onclick="close_modal()">Done</a>
+      </center>
+        </p>
+        <br>
+      </div>
+      <div class="" id="details_hidden_3x">
       </div>
     </figure>
   </div>
@@ -543,10 +590,10 @@ Mid:#5aaa9d
             <div class="pizza__tag pizza__tag--2">#RiderShift</div>
           </div>
           <p class="pizza__description">
-            <input type="text" class="travel_input" id="1" placeholder="From" name="travel_from" onclick="map_location(this.id)" required>
+            <input type="text" class="travel_input" id="travel_from" placeholder="From" name="travel_from" onclick="map_location(this.id)" autocomplete="off" required>
             &nbsp;&nbsp;
             <img class="travel_arrow"src="img/img_arrow.png"> &nbsp;&nbsp;
-            <input type="text" class="travel_input"  id="2" placeholder="Destination" name="travel_dest" onclick="map_location(this.id)" required>
+            <input type="text" class="travel_input"  id="travel_dest" placeholder="Destination" name="travel_dest" onclick="map_location(this.id)" autocomplete="off" required>
             <br>
 
             <input type="text" class="form-control" id="latitude_1" placeholder="Latitude" name="lat_from" hidden readonly>
@@ -556,14 +603,14 @@ Mid:#5aaa9d
             <input type="number" class="form-control" id="radius" placeholder="Radius" hidden readonly>
 
 
-            <select class="select_travel" name="travel_type">
+            <select class="select_travel" name="travel_type" id="travel_type" onchange="check_type()" required>
               <option class="select_travel_option" value="" disabled selected>Travel Type</option>
-              <option class="select_travel_option" value="car">I Will Provide A Lift</option>
-              <option class="select_travel_option" value="bike">I Need A Lift</option>
-              <option class="select_travel_option" value="auto">I Need A Companion</option>
+              <option class="select_travel_option" value="rider">I Will Provide A Lift</option>
+              <option class="select_travel_option" value="lift">I Need A Lift</option>
+              <option class="select_travel_option" value="companion">I Need A Companion</option>
             </select>
 
-              <select class="select_travel" name="travel_mode">
+              <select class="select_travel" name="travel_mode" id="travel_mode" required>
                 <option class="select_travel_option" value="" disabled selected>Travel Mode</option>
                 <option class="select_travel_option" value="car">Car</option>
                 <option class="select_travel_option" value="bike">Bike / Scooter</option>
@@ -603,12 +650,19 @@ Mid:#5aaa9d
 <script src="js/leaflet.js"></script>
 <script src="js/Control.OSMGeocoder.js"></script>
 <script src="js/OSMLocationPicker.js"></script>
+<script src="js/jquery-1.12.4.js"></script>
+<script src="js/jquery-ui.js"></script>
+<script src="js/autocomplete-location.js"></script>
 <script>
 	$(document).ready(function(){
 
     var x = document.getElementById("details_hidden_2");
     x.style.display = "none";
     var x = document.getElementById("details_hidden_2x");
+    x.style.display = "none";
+    var x = document.getElementById("details_hidden_3");
+    x.style.display = "none";
+    var x = document.getElementById("details_hidden_3x");
     x.style.display = "none";
     
 		$("#slideshow > div:gt(0)").hide();
@@ -621,19 +675,54 @@ setInterval(function() {
     .end()
     .appendTo('#slideshow');
 },  1500);
-	});
+  });
+  
+  function check_type(){
+    var x = document.getElementById("travel_type").value;
+    if(x=="lift")
+    {
+      var x = document.getElementById("travel_mode");
+      x.disabled = true;
+      x.style.display = "none";
+    }
+    if(x=="rider")
+    {
+      var x = document.getElementById("travel_mode");
+      x.style.display = "inline";
+    }
+    if(x=="companion")
+    {
+      var x = document.getElementById("travel_mode");
+      x.disabled = true;
+      x.style.display = "none";
+    }
+  }
 
   function vehicle_details_display()
   {
-    var x = document.getElementById("details_hidden_1");
-    x.style.display = "none";
-    var x = document.getElementById("details_hidden_1x");
-    x.style.display = "none";
+    var x = document.getElementById("travel_type").value;
+    if(x=="rider")
+    {
+      var x = document.getElementById("details_hidden_1");
+      x.style.display = "none";
+      var x = document.getElementById("details_hidden_1x");
+      x.style.display = "none";
 
-    var x = document.getElementById("details_hidden_2");
-    x.style.display = "inherit";
-    var x = document.getElementById("details_hidden_2x");
-    x.style.display = "inherit";
+      var x = document.getElementById("details_hidden_2");
+      x.style.display = "inherit";
+      var x = document.getElementById("details_hidden_2x");
+      x.style.display = "inherit";
+    }
+    if(x=="lift")
+    {
+      submit_details();
+    }
+    if(x=="companion")
+    {
+      submit_details();
+    }
+
+
   }
 
   function vehicle_details_hide()
@@ -649,24 +738,20 @@ setInterval(function() {
     x.style.display = "none";
   }
 
+  function close_modal(){
+    var x = document.getElementById("details_hidden_3");
+    x.style.display = "none";
+    var x = document.getElementById("details_hidden_3x");
+    x.style.display = "none";
+    modal.style.display = "none";
+  }
+
   function submit_details()
   {
-
-    /**
- * Simple preloader in Javascript
- * 
- * Copyright (c) 2016 iBird Rose
- * Dual licensed under the MIT and GPL licenses.
- *
- * Version 1.1.1
- */
-
-/* preloader */
-
-;(function () {
-	var preloaderDiv = document.createElement('div');
-	preloaderDiv.innerHTML = `
-		<style>
+      (function () {
+	    var preloaderDiv = document.createElement('div');
+	    preloaderDiv.innerHTML = `
+		  <style>
             #preloader_preload {
                 display: block;
                 z-index: 99999;
@@ -685,15 +770,15 @@ setInterval(function() {
             }
         </style>
         <div id="preloader"><div id="preloader_preload"></div></div>
-	`;
+	      `;
 	
-	document.body.insertBefore(preloaderDiv, document.body.firstChild);
+	      document.body.insertBefore(preloaderDiv, document.body.firstChild);
 
-    var preloaderStart = document.getElementById("preloader_preload");
+        var preloaderStart = document.getElementById("preloader_preload");
 
-    document.body.classList.add('preloader');
+        document.body.classList.add('preloader');
 
-    function fadeOutFunction(el) {
+        function fadeOutFunction(el) {
         el.style.opacity = 1;
 
         var preloaderEngine = setInterval(function () {
@@ -708,14 +793,18 @@ setInterval(function() {
             }
 
         }, 20);
-    }
+      }
 
-    window.onload = function () {
+      window.onload = function () {
         
-    };
-})();
+      };
+      })();
 
-/* END preloader */
+      /* END preloader */
+
+    var x = document.getElementById("travel_type").value;
+    if(x=="rider")
+    {
       var travel_type=document.getElementsByName("travel_type")[0].value;
       var travel_mode=document.getElementsByName("travel_mode")[0].value;
       
@@ -736,7 +825,118 @@ setInterval(function() {
       var long_dest=document.getElementsByName("long_dest")[0].value;
       
 
-$.ajax({
+      $.ajax({
+
+        url: "validate.php",
+				data: {validation:2, travel_type: travel_type, travel_mode: travel_mode, travel_from: travel_from, travel_destination: travel_destination, inter_point_1: inter_point_1, inter_point_2: inter_point_2, inter_point_3: inter_point_3, inter_point_4: inter_point_4, inter_point_5: inter_point_5, vehicle_modal: vehicle_modal, vehicle_colour: vehicle_colour, vehicle_number: vehicle_number, lat_from: lat_from, long_from: long_from, lat_dest: lat_dest, long_dest: long_dest},
+        type: "POST",
+        success: function (data,status) {
+          if(data==1)
+          {
+            $('input').val('');
+            $('option').attr('selected', false);
+            var x = document.getElementById("travel_mode");
+            x.style.display = "inline";
+            x.disabled = false;
+            //modal.style.display = "none";
+            vehicle_details_hide();
+            var x = document.getElementById("details_hidden_1");
+            x.style.display = "none";
+            var x = document.getElementById("details_hidden_1x");
+            x.style.display = "none";
+            var x = document.getElementById("details_hidden_3");
+            x.style.display = "inherit";
+            var x = document.getElementById("details_hidden_3x");
+            x.style.display = "inherit";
+            var x = document.getElementById("preloader_preload");
+            x.style.display = "none";
+          }
+          else
+          {
+          alert(data);
+          var x = document.getElementById("preloader_preload");
+          x.style.display = "none";
+          }
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+        alert("Error Contacting Server");
+        var x = document.getElementById("preloader_preload");
+        x.style.display = "none";
+        }
+      });
+    }
+
+    if(x=="lift")
+    {
+      var travel_type=document.getElementsByName("travel_type")[0].value;
+      var travel_mode=null;
+      
+      var travel_destination=document.getElementsByName("travel_dest")[0].value;
+      var travel_from=document.getElementsByName("travel_from")[0].value;
+      var inter_point_1=document.getElementsByName("inter_loc_1")[0].value; 
+      var inter_point_2=document.getElementsByName("inter_loc_2")[0].value; 
+      var inter_point_3=document.getElementsByName("inter_loc_3")[0].value; 
+      var inter_point_4=document.getElementsByName("inter_loc_4")[0].value; 
+      var inter_point_5=document.getElementsByName("inter_loc_5")[0].value; 
+      var vehicle_modal=null; 
+      var vehicle_colour=null; 
+      var vehicle_number=null;
+      
+      var lat_from=document.getElementsByName("lat_from")[0].value;
+      var long_from=document.getElementsByName("long_from")[0].value;
+      var lat_dest=document.getElementsByName("lat_dest")[0].value;
+      var long_dest=document.getElementsByName("long_dest")[0].value;
+      
+
+      $.ajax({
+
+        url: "validate.php",
+				data: {validation:2, travel_type: travel_type, travel_mode: travel_mode, travel_from: travel_from, travel_destination: travel_destination, inter_point_1: inter_point_1, inter_point_2: inter_point_2, inter_point_3: inter_point_3, inter_point_4: inter_point_4, inter_point_5: inter_point_5, vehicle_modal: vehicle_modal, vehicle_colour: vehicle_colour, vehicle_number: vehicle_number, lat_from: lat_from, long_from: long_from, lat_dest: lat_dest, long_dest: long_dest},
+        type: "POST",
+        success: function (data,status) {
+          if(data==1)
+          {
+            window.location.href = 'conformation.php';
+          }
+          else
+          {
+          alert(data);
+          var x = document.getElementById("preloader_preload");
+          x.style.display = "none";
+          }
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+        alert("Error Contacting Server");
+        var x = document.getElementById("preloader_preload");
+        x.style.display = "none";
+        }
+      });
+      
+    }
+
+    if(x=="companion")
+    {
+      var travel_type=document.getElementsByName("travel_type")[0].value;
+      var travel_mode=null;
+      
+      var travel_destination=document.getElementsByName("travel_dest")[0].value;
+      var travel_from=document.getElementsByName("travel_from")[0].value;
+      var inter_point_1=document.getElementsByName("inter_loc_1")[0].value; 
+      var inter_point_2=document.getElementsByName("inter_loc_2")[0].value; 
+      var inter_point_3=document.getElementsByName("inter_loc_3")[0].value; 
+      var inter_point_4=document.getElementsByName("inter_loc_4")[0].value; 
+      var inter_point_5=document.getElementsByName("inter_loc_5")[0].value; 
+      var vehicle_modal=null; 
+      var vehicle_colour=null; 
+      var vehicle_number=null;
+      
+      var lat_from=document.getElementsByName("lat_from")[0].value;
+      var long_from=document.getElementsByName("long_from")[0].value;
+      var lat_dest=document.getElementsByName("lat_dest")[0].value;
+      var long_dest=document.getElementsByName("long_dest")[0].value;
+      
+
+      $.ajax({
 
         url: "validate.php",
 				data: {validation:2, travel_type: travel_type, travel_mode: travel_mode, travel_from: travel_from, travel_destination: travel_destination, inter_point_1: inter_point_1, inter_point_2: inter_point_2, inter_point_3: inter_point_3, inter_point_4: inter_point_4, inter_point_5: inter_point_5, vehicle_modal: vehicle_modal, vehicle_colour: vehicle_colour, vehicle_number: vehicle_number, lat_from: lat_from, long_from: long_from, lat_dest: lat_dest, long_dest: long_dest},
@@ -760,7 +960,9 @@ $.ajax({
         }
       });
 
-}
+    }
+
+  }
 
   function map_location(id)
   {
@@ -769,7 +971,7 @@ $.ajax({
     var x = document.getElementById("slideshow");
     x.style.display = "none";
 
-    if(id==1)
+    if(id=="travel_from")
     {
 
       
@@ -786,14 +988,14 @@ $.ajax({
       }
 
     OSMPICKER.initmappicker(latx, longx, 100, {
-			addressId: "1",
+			addressId: "travel_from",
 			latitudeId: "latitude_1",
 			longitudeId: "longitude_1",
 			radiusId: "radius"
     });
     }
 
-    if(id==2)
+    if(id=="travel_dest")
     {
 
       var lat = document.getElementById("latitude_2").value;
@@ -808,7 +1010,7 @@ $.ajax({
         var longx = long;
       }
     OSMPICKER.initmappicker(latx, longx, 100, {
-			addressId: "2",
+			addressId: "travel_dest",
 			latitudeId: "latitude_2",
 			longitudeId: "longitude_2",
 			radiusId: "radius"
@@ -828,6 +1030,10 @@ var span = document.getElementsByClassName("close")[0];
 // When the user clicks on the button, open the modal
 btn.onclick = function() {
   modal.style.display = "block";
+  var x = document.getElementById("details_hidden_1");
+  x.style.display = "block";
+  var x = document.getElementById("details_hidden_1x");
+  x.style.display = "block";
 }
 
 // When the user clicks on <span> (x), close the modal
@@ -842,5 +1048,6 @@ window.onclick = function(event) {
   }
 }
 </script>
+
 </body>
 </html>
