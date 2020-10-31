@@ -1,4 +1,10 @@
 <?php
+session_start();
+if(!isset($_SESSION['admin']))
+{
+  header("location:index.html");
+}
+?>
 /*
 include 'db_connection.php';
 $conn = OpenCon();
